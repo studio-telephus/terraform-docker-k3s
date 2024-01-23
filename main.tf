@@ -79,7 +79,7 @@ resource "docker_container" "k3s_server" {
   }
 
   env = [
-    "K3S_TOKEN=${random_password.k3s_token.result}",
+    "K3S_TOKEN=${var.k3s_token}",
   ]
 
   mounts {
@@ -151,7 +151,7 @@ module "worker_groups" {
   containers_name       = format("%s-%s", var.cluster_name, each.key)
   restart               = var.restart
   network_name          = local.network_name
-  k3s_token             = random_password.k3s_token.result
+  k3s_token             = var.k3s_token
   k3s_url               = format("https://%s:6443", docker_container.k3s_server.ip_address)
   registries_yaml       = abspath(local_file.registries_yaml.filename)
   server_container_name = docker_container.k3s_server.name
@@ -159,10 +159,6 @@ module "worker_groups" {
   node_count  = each.value.node_count
   node_labels = each.value.node_labels
   node_taints = each.value.node_taints
-}
-
-resource "random_password" "k3s_token" {
-  length = 16
 }
 
 resource "null_resource" "wait_for_cluster" {
