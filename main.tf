@@ -53,11 +53,6 @@ EOF
   filename = "${path.module}/registries.yaml"
 }
 
-resource "docker_image" "k3s" {
-  name         = "rancher/k3s:${var.k3s_version}"
-  keep_locally = true
-}
-
 resource "docker_volume" "k3s_server_kubelet" {
   count = var.csi_support ? 1 : 0
   name  = "k3s-server-kubelet-${var.cluster_name}"
@@ -138,9 +133,9 @@ resource "null_resource" "destroy_k3s_server" {
 }
 
 module "worker_groups" {
-  for_each = var.worker_groups
-  source   = "./modules/worker_group"
-
+  for_each              = var.worker_groups
+  source                = "./modules/worker_group"
+  image                 = docker_image.k3s.image_id
   k3s_version           = var.k3s_version
   containers_name       = format("%s-%s", var.cluster_name, each.key)
   restart               = var.restart

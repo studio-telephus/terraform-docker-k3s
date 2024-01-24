@@ -1,5 +1,5 @@
-variable "k3s_version" {
-  description = "The K3s version to use"
+variable "image" {
+  description = "The K3s image to use"
   type        = string
 }
 
@@ -16,6 +16,7 @@ variable "network_name" {
 variable "k3s_token" {
   description = "The K3S_TOKEN to use"
   type        = string
+  sensitive   = true
 }
 
 variable "k3s_url" {

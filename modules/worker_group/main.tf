@@ -1,8 +1,3 @@
-resource "docker_image" "k3s" {
-  name         = "rancher/k3s:${var.k3s_version}"
-  keep_locally = true
-}
-
 resource "docker_volume" "kubelet" {
   count = var.csi_support ? var.node_count : 0
 
@@ -10,13 +5,10 @@ resource "docker_volume" "kubelet" {
 }
 
 resource "docker_container" "this" {
-  count = var.node_count
-
-  image = docker_image.k3s.image_id
-  name  = "k3s-agent-${var.containers_name}-${count.index}"
-
+  count   = var.node_count
+  image   = var.image
+  name    = "k3s-agent-${var.containers_name}-${count.index}"
   restart = var.restart
-
   command = flatten(
     concat(
       ["agent"],
@@ -24,7 +16,6 @@ resource "docker_container" "this" {
       [for taint in var.node_taints : ["--node-taint", taint]],
     )
   )
-
   privileged = true
 
   networks_advanced {
