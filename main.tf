@@ -136,7 +136,6 @@ module "worker_groups" {
   for_each              = var.worker_groups
   source                = "./modules/worker_group"
   image                 = docker_image.k3s.image_id
-  k3s_version           = var.k3s_version
   containers_name       = format("%s-%s", var.cluster_name, each.key)
   restart               = var.restart
   network_name          = local.network_name
