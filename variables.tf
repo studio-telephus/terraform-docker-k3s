@@ -10,7 +10,7 @@ variable "k3s_version" {
 }
 
 variable "k3s_token" {
-  type = string
+  type      = string
   sensitive = true
 }
 
@@ -91,9 +91,9 @@ variable "server_ports" {
 
   type = set(object({
     internal = number
-    external = optional(number)
-    ip       = optional(string)
-    protocol = optional(string)
+    external = number
+    ip       = string
+    protocol = string
   }))
 }
 
