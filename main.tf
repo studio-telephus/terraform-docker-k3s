@@ -1,6 +1,6 @@
 locals {
   network_name     = var.network_name == null ? docker_network.k3s.0.name : var.network_name
-  cluster_endpoint = coalesce(var.cluster_endpoint, docker_container.k3s_server.ip_address)
+  cluster_endpoint = coalesce(var.cluster_endpoint, docker_container.k3s_server.network_data.ip_address)
   server_config    = var.cluster_endpoint == null ? var.server_config : concat(["--tls-san", var.cluster_endpoint], var.server_config)
 }
 
@@ -48,7 +48,7 @@ mirrors:
 %{for key, registry_mirror in docker_container.registry_mirror~}
   ${key}:
     endpoint:
-      - http://${registry_mirror.ip_address}:5000
+      - http://${registry_mirror.network_data.ip_address}:5000
 %{endfor~}
 EOF
   filename = "${path.module}/registries.yaml"
@@ -152,7 +152,7 @@ module "worker_groups" {
   restart               = var.restart
   network_name          = local.network_name
   k3s_token             = var.k3s_token
-  k3s_url               = format("https://%s:6443", docker_container.k3s_server.ip_address)
+  k3s_url               = format("https://%s:6443", docker_container.k3s_server.network_data.ip_address)
   registries_yaml       = abspath(local_file.registries_yaml.filename)
   server_container_name = docker_container.k3s_server.name
 

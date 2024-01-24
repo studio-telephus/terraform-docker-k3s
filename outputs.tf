@@ -3,7 +3,7 @@ output "cluster_endpoint" {
 }
 
 output "ingress_ip_address" {
-  value = docker_container.k3s_server.ip_address
+  value = docker_container.k3s_server.network_data.ip_address
 }
 
 output "kubeconfig" {
