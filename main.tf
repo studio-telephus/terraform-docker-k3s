@@ -23,7 +23,7 @@ resource "docker_image" "registry" {
 resource "docker_container" "registry_mirror" {
   for_each = var.registry_mirrors
 
-  image = docker_image.registry.latest
+  image = docker_image.registry.image_id
   name  = format("registry-%s-%s", replace(each.key, ".", "-"), var.cluster_name)
 
   restart = var.restart
@@ -65,7 +65,7 @@ resource "docker_volume" "k3s_server_kubelet" {
 }
 
 resource "docker_container" "k3s_server" {
-  image = docker_image.k3s.latest
+  image = docker_image.k3s.image_id
   name  = "k3s-server-${var.cluster_name}"
 
   restart = var.restart

@@ -12,7 +12,7 @@ resource "docker_volume" "kubelet" {
 resource "docker_container" "this" {
   count = var.node_count
 
-  image = docker_image.k3s.latest
+  image = docker_image.k3s.image_id
   name  = "k3s-agent-${var.containers_name}-${count.index}"
 
   restart = var.restart
